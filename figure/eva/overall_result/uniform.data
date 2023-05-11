@@ -1,0 +1,11 @@
+db	workload	qps	avglat	lat99
+RocksDB	r	895.9	6007.4	14023
+RocksDB	rw	1655.5	1655.7	10079
+Auto	r	894.8	6005.9	14015
+Auto	rw	1655.8	1655.7	10103
+SILK	r	894.1	6007.4	14023
+SILK	rw	0	0	0
+CruiseDB	r	861.2	5808.7	19711
+CruiseDB	rw	1644.5	1864.1	11999
+Calcspar	r	890.7	2516.5	685
+Calcspar	rw	1644	883.6	603

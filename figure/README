@@ -1,0 +1,21 @@
+This contains all the sorted drawing data and drawing python code
+
+fig1-fig12 correspond to the images in the paper
+
+figure14: ./eva/overall_result/eva_mixgraph_performance.py
+figure15: ./eva/overall_result/eva_ycsb_performance.py
+figure16: ./eva/overall_result/eva_ycsb_99lat.py
+figure17: ./eva/overall_result/eva_uniform_performance.py
+
+
+figure18: ./eva/eva_cia/eva_threads.py
+figure19: ./eva/eva_cia/eva_iops_alloction.py
+
+figure20: ./eva/eva_cache/plot_cache.py
+figure21: ./eva/eva_cache/eva_cache_op.py
+figure22: ./eva/eva_cache/eva_cache_limit.py
+
+figure23: ./eva/eva_opp_com/eva_write_perforam.py
+
+figure24: ./eva/eva_cloud/eva_cloud_ebs.py
+figure25: ./eva/eva_cloud/eva_workload.py
