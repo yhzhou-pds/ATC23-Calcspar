@@ -147,7 +147,7 @@ void *eachThread(void *vargp)
         struct iocb *p = &(z->iocb_);
         z->start = Gettime();
         z->num = i; 
-        io_prep_pread(p, fd, read_buf, STRIDE_SIZE, pos*STRIDE_SIZE); 
+        io_prep_pread(p, fd, read_buf, STRIDE_SIZE, pos); 
         p->data = (void *) read_buf;
 
         long slat_time = Gettime();
