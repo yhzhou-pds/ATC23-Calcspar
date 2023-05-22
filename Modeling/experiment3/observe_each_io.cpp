@@ -30,9 +30,9 @@ int STRIDE_SIZE = SECTOR_SIZE * 1;      // chunk size actually
 int num_ios = 20000;
 int completed_ios = 0;
 
-int D = 8;
-int j = 2;
-int d = 8;
+int D = 0;
+int j = 0;
+int d = 0;
 int rate_iops=1000;
 int fd = 0;
 io_context_t ctx_;
@@ -41,8 +41,9 @@ std::condition_variable cond;
 std::mutex mutex;
 int queue_depth = 0;
 int max_qd = 16;
-ConsumerProducerQueue<long> job_queue; 
+ConsumerProducerQueue<long> job_queue;
 int pattern = 7;
+int dev_size=10;
 
 struct io_event events[MAX_COUNT];
 struct timespec timeout;
@@ -129,7 +130,7 @@ void *eachThread(void *vargp)
         if(pos == -2) {
             zyh_time = Gettime();
             avg_time = zyh_time;
-            zyh_start_time = zyh_time;
+            zyh_start_time = zyh_time; 
             continue;
         }
 
@@ -231,7 +232,7 @@ void generate_read_trace(char type) {
 	    std::cout << "To read randomly" << std::endl;
         srand(time(0));
 	    for (int i = 0; i < num_ios; i++)  
-            	read_order.push_back((long)((rand() %(dev_size*1024*1024*2/d)))*STRIDE_SIZE);
+            read_order.push_back((long)((rand() %(dev_size*1024*1024*2/d)))*STRIDE_SIZE);
      } else if (type == 's') {
 	    std::cout << "To read sequentially with offset " << D << std::endl;
         for (int i = 0; i < num_ios; i++) { 
@@ -277,12 +278,6 @@ int main(int argc, char* * argv) {
              printf("    CPU %d\n", j);
      
      printf("===== Multi-thread libaio to Specified Device =====\n");
-     // identify chunk size
-//     if (argc < 7) {
-//          printf("Wrong parameters: multi_thread_aio dev_name D(offset to jump, in unit of sector) j(num_parallel_jobs to submit IO) d(stride/io_size in sector) read_type(random/seq/jump) queue_depth\n");
-//          return 1;
-//     }
-
 
      // identify chunk size
     if (argc < 5) {
@@ -292,19 +287,15 @@ int main(int argc, char* * argv) {
 
 
      D = 8;    //offset between two reads, in unit of sector
-     j = 2;
+     j = 1;
      d = atoi(argv[2]);        // request size, d * 1024
-     dev_size = atoi(argv[4]);  
-    
+     dev_size=atoi(argv[4]);
+
      STRIDE_SIZE = SECTOR_SIZE * d;
-    //  max_qd = atoi(argv[6]);
-//      rate_iops = atoi(argv[7]);     
+ 
      max_qd = 300000; 
      
-//      pattern = atoi(argv[6])/16;
      job_queue.set_max(max_qd); 
-
-//      printf("To run with:\n    jump: %d, num_jobs: %d, stride: %d, device_name: %s, write_order: %s, max_qd: %d, rate_iops: %d\n", D, j, d, argv[1], argv[5], max_qd,rate_iops);
 
      // open raw block device
      fd = open(argv[1], O_RDONLY | O_DIRECT);      // O_DIRECT
@@ -323,17 +314,6 @@ int main(int argc, char* * argv) {
     // generate read trace
     generate_read_trace(argv[3][0]);
     
-    printf("%ld\n",LONG_MAX);
-
-    long max = read_order[0];
-    for(int i=0;i < read_order.size();i++){
-        if(read_order[i] > max) {
-            max = read_order[i];
-        }
-    } 
-    printf("the max addr is %ld\n",max);
-    // return 0;
-     //parallel reads
      
      // start the number of threads
     pthread_t * thread_pool = (pthread_t *)malloc(sizeof(pthread_t) * j);
@@ -374,25 +354,7 @@ int main(int argc, char* * argv) {
             usleep(940);
         }
 
-        if(i==15000) sleep(1);
-        
-        // if(i == 1000 || i==2600 || i==3500 || i==4000 || i==6000 ){
-        //     long sp = (time_zyh[i].into_queue - time_zyh[1].into_queue) % 1000000;
-		//     usleep(1000000 - sp - 50);
-        // }
- 
-        // if( i == 7000 || i==8000 || i==9000 || i==10000 || i==11000 || i==12000 || i==13000 || i==14000 || i==15000){
-        //     long sp = (time_zyh[i].into_queue - time_zyh[1].into_queue) % 1000000;
-		//     usleep(1000000 - sp - 50);
-        // }
-
-        // if(i==15000){
-        //     sleep(1);
-        // }
-//         if(i==16000 || i==17000 || i==18000 || i==19000) {
-//             long sp = (time_zyh[i].into_queue - time_zyh[1].into_queue) % 1000000;
-// 		    usleep(1000000 - sp - 50);
-//         }
+        if(i==15000) sleep(1); 
     }
 
     long end_send = Gettime() - start_send;
