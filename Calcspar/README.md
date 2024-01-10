@@ -93,7 +93,6 @@ run:
     -use_direct_io_for_flush_and_compaction=true \
     -use_direct_reads=true \
     -threads=10 \
-    -write_buffer_size=$((8*1024*1024)) \
     -max_background_flushes=4 \
     -max_background_compactions=4 -subcompactions=4 \
     -histogram=1 --statistics \
